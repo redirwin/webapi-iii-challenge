@@ -2,36 +2,37 @@ const express = require("express");
 
 const router = express.Router();
 
-router.use(validateUserId);
+const Users = require("./userDb");
 
 router.post("/", (req, res) => {});
 
-router.post("/:id/posts", (req, res) => {});
+router.post("/:id/posts", validateUserId, (req, res) => {});
 
 router.get("/", (req, res) => {});
 
-router.get("/:id", (req, res) => {
-  console.log(req);
+router.get("/:id", validateUserId, (req, res) => {
+  res.status(200).json(req.user);
 });
 
-router.get("/:id/posts", (req, res) => {});
+router.get("/:id/posts", validateUserId, (req, res) => {});
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", validateUserId, (req, res) => {});
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", validateUserId, (req, res) => {});
 
 //custom middleware
 
 function validateUserId(req, res, next) {
-  req.user = req.params.id;
-  if (req.user) {
-    next();
-  } else {
-    res.status(400).json({ message: "invalid user id" });
-  }
+  const id = req.params.id;
+  Users.getById(id).then(result => {
+    if (result) {
+      req.user = result;
+      next();
+    } else {
+      res.status(400).json({ message: "invalid user id" });
+    }
+  });
 }
-
-function validateUserId(req, res, next) {}
 
 function validateUser(req, res, next) {}
 
