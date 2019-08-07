@@ -4,7 +4,11 @@ const router = express.Router();
 
 const Users = require("./userDb");
 
-router.post("/", (req, res) => {});
+router.use(express.json());
+
+router.post("/", validateUser, (req, res) => {
+  res.status(200).json({ message: "Success!" });
+});
 
 router.post("/:id/posts", validateUserId, (req, res) => {});
 
@@ -34,7 +38,14 @@ function validateUserId(req, res, next) {
   });
 }
 
-function validateUser(req, res, next) {}
+function validateUser(req, res, next) {
+  console.log("req body is: ", req.body);
+  if (req.body.name) {
+    next();
+  } else {
+    res.status(400).json({ message: "missing user data" });
+  }
+}
 
 function validatePost(req, res, next) {}
 
