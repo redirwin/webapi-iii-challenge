@@ -3,18 +3,39 @@ const express = require("express");
 const router = express.Router();
 
 const Users = require("./userDb");
+const Posts = require("../posts/postDb");
 
-router.post("/", validateUser, validatePost, (req, res) => {
-  res.status(200).json({ message: "Success to /!" });
+// UNABLE TO CREATE A NEW USER... GETTING SERVER ERROR
+router.post("/", validateUser, (req, res) => {
+  Users.insert(req.body)
+    .then(newUser => {
+      res.status(200).json(newUser);
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: "There was a server error while trying to add the new user."
+      });
+    });
 });
 
+// UNABLE TO CREATE A NEW POST... GETTING SERVER ERROR
 router.post(
   "/:id/posts",
   validateUserId,
   validateUser,
   validatePost,
   (req, res) => {
-    res.status(200).json({ message: "Success to id/posts!" });
+    const id = req.params.id;
+
+    Posts.insert(id)
+      .then(newPost => {
+        res.status(200).json(newPost);
+      })
+      .catch(() => {
+        res
+          .status(500)
+          .json({ error: `Server error while creating a new post.` });
+      });
   }
 );
 
@@ -39,7 +60,7 @@ router.get("/:id", validateUserId, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        error: `There was a server error while trying to retrived user with id ${id}`
+        error: `There was a server error while trying to retrived user with id ${id}.`
       });
     });
 });
@@ -52,12 +73,23 @@ router.get("/:id/posts", validateUserId, (req, res) => {
     })
     .catch(() => {
       res.status(500).json({
-        error: `Server error while trying to retreive posts of user with id ${id}`
+        error: `Server error while trying to retreive posts of user with id ${id}.`
       });
     });
 });
 
-router.delete("/:id", validateUserId, (req, res) => {});
+router.delete("/:id", validateUserId, (req, res) => {
+  const id = req.params.id;
+  Users.remove(id)
+    .then(totalRecordsDeleted => {
+      res.status(200).json(totalRecordsDeleted);
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: `There was a server error while trying to delete user with id ${id}.`
+      });
+    });
+});
 
 router.put("/:id", validateUserId, (req, res) => {});
 

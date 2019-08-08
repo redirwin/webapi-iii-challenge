@@ -1,5 +1,6 @@
 const express = require("express");
 const userRouter = require("./users/userRouter");
+const postsRouter = require("./posts/postRouter");
 const server = express();
 
 server.use(express.json());
@@ -14,7 +15,9 @@ server.get("/", logger, (req, res) => {
 //custom middleware
 
 function logger(req, res, next) {
-  console.log(`You sent the ${req.method} to ${req.url} at ${new Date()}.`);
+  console.log(
+    `You sent the ${req.method} method to ${req.url} at ${new Date()}.`
+  );
   next();
 }
 
