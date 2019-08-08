@@ -21,6 +21,6 @@ function logger(req, res, next) {
   next();
 }
 
-server.listen(8000, () => console.log("\nServer listening on port 8000... \n"));
+server.listen(5000, () => console.log("\nServer listening on port 5000... \n"));
 
 module.exports = server;

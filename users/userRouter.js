@@ -17,7 +17,6 @@ router.post("/", validateUser, (req, res) => {
     });
 });
 
-// UNABLE TO CREATE A NEW POST... GETTING SERVER ERROR
 router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
   Posts.insert(req.body)
     .then(newPost => {
@@ -120,10 +119,10 @@ function validateUser(req, res, next) {
 }
 
 function validatePost(req, res, next) {
-  if (req.body.text) {
-    next();
+  if (!req.body.text || !req.body.user_id) {
+    res.status(400).json({ message: "missing required text or user_id field" });
   } else {
-    res.status(400).json({ message: "missing required text field" });
+    next();
   }
 }
 
