@@ -4,10 +4,8 @@ const router = express.Router();
 
 const Users = require("./userDb");
 
-router.use(express.json());
-
 router.post("/", validateUser, validatePost, (req, res) => {
-  res.status(200).json({ message: "Success!" });
+  res.status(200).json({ message: "Success to /!" });
 });
 
 router.post(
@@ -20,10 +18,30 @@ router.post(
   }
 );
 
-router.get("/", (req, res) => {});
+router.get("/", (req, res) => {
+  Users.get()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(() => {
+      res.status(500).json({
+        error:
+          "There was a server error while trying to retrieve the list of users."
+      });
+    });
+});
 
 router.get("/:id", validateUserId, (req, res) => {
-  res.status(200).json(req.user);
+  const id = req.params.id;
+  Users.getById(id)
+    .then(user => {
+      res.status(200).json(user);
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: `There was a server error while trying to retrived user with id ${id}`
+      });
+    });
 });
 
 router.get("/:id/posts", validateUserId, (req, res) => {});
