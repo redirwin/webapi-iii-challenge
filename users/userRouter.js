@@ -5,7 +5,6 @@ const router = express.Router();
 const Users = require("./userDb");
 const Posts = require("../posts/postDb");
 
-// UNABLE TO CREATE A NEW USER... GETTING SERVER ERROR
 router.post("/", validateUser, (req, res) => {
   Users.insert(req.body)
     .then(newUser => {
@@ -19,25 +18,17 @@ router.post("/", validateUser, (req, res) => {
 });
 
 // UNABLE TO CREATE A NEW POST... GETTING SERVER ERROR
-router.post(
-  "/:id/posts",
-  validateUserId,
-  validateUser,
-  validatePost,
-  (req, res) => {
-    // const id = req.params.id;
-    const post = req.body;
-    Posts.insert(post)
-      .then(newPost => {
-        res.status(200).json(newPost);
-      })
-      .catch(() => {
-        res
-          .status(500)
-          .json({ error: `Server error while creating a new post.` });
-      });
-  }
-);
+router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+  Posts.insert(req.body)
+    .then(newPost => {
+      res.status(200).json(newPost);
+    })
+    .catch(() => {
+      res
+        .status(500)
+        .json({ error: `Server error while creating a new post.` });
+    });
+});
 
 router.get("/", (req, res) => {
   Users.get()
