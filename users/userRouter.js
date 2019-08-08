@@ -44,7 +44,18 @@ router.get("/:id", validateUserId, (req, res) => {
     });
 });
 
-router.get("/:id/posts", validateUserId, (req, res) => {});
+router.get("/:id/posts", validateUserId, (req, res) => {
+  const id = req.params.id;
+  Users.getUserPosts(id)
+    .then(userPosts => {
+      res.status(200).json(userPosts);
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: `Server error while trying to retreive posts of user with id ${id}`
+      });
+    });
+});
 
 router.delete("/:id", validateUserId, (req, res) => {});
 
