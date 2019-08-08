@@ -25,9 +25,9 @@ router.post(
   validateUser,
   validatePost,
   (req, res) => {
-    const id = req.params.id;
-
-    Posts.insert(id)
+    // const id = req.params.id;
+    const post = req.body;
+    Posts.insert(post)
       .then(newPost => {
         res.status(200).json(newPost);
       })
@@ -91,7 +91,20 @@ router.delete("/:id", validateUserId, (req, res) => {
     });
 });
 
-router.put("/:id", validateUserId, (req, res) => {});
+router.put("/:id", validateUserId, (req, res) => {
+  const id = req.params.id;
+  const update = req.body;
+
+  Users.update(id, update)
+    .then(count => {
+      res.status(200).json(count);
+    })
+    .catch(() => {
+      res
+        .status(200)
+        .json({ error: `There was a server error while updating that user.` });
+    });
+});
 
 //custom middleware
 
