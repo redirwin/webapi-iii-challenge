@@ -6,11 +6,19 @@ const Users = require("./userDb");
 
 router.use(express.json());
 
-router.post("/", validateUser, (req, res) => {
+router.post("/", validateUser, validatePost, (req, res) => {
   res.status(200).json({ message: "Success!" });
 });
 
-router.post("/:id/posts", validateUserId, (req, res) => {});
+router.post(
+  "/:id/posts",
+  validateUserId,
+  validateUser,
+  validatePost,
+  (req, res) => {
+    res.status(200).json({ message: "Success to id/posts!" });
+  }
+);
 
 router.get("/", (req, res) => {});
 
@@ -39,14 +47,19 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  console.log("req body is: ", req.body);
   if (req.body.name) {
     next();
   } else {
-    res.status(400).json({ message: "missing user data" });
+    res.status(400).json({ message: "missing required name field" });
   }
 }
 
-function validatePost(req, res, next) {}
+function validatePost(req, res, next) {
+  if (req.body.text) {
+    next();
+  } else {
+    res.status(400).json({ message: "missing required text field" });
+  }
+}
 
 module.exports = router;
